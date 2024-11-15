@@ -1,4 +1,6 @@
-pkg install flask 
+pkg update && pkg upgrade
+
+pip install flask 
 
 
 
