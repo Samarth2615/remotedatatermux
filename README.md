@@ -24,3 +24,5 @@ run by python server.py
 
 
 ssh-keygen for serveo
+
+termux-wake-lock
