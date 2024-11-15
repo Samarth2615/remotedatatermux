@@ -1,5 +1,11 @@
 pkg update && pkg upgrade
 
+pkg install termux-api
+
+termux-setup-storage
+
+
+
 pip install flask 
 
 
