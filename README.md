@@ -18,3 +18,7 @@ install new termux from https://f-droid.org/repo/com.termux_1020.apk
 
 
 run by python server.py
+
+
+
+ssh-keygen for serveo
