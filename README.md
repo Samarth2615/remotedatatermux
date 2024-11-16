@@ -44,3 +44,31 @@ pkg update && pkg upgrade -y && pkg install python termux-api git -y && termux-s
 
 nohup ssh -o ServerAliveInterval=60 -R 80:localhost:8080 serveo.net &
 nohup python server.py &
+
+
+
+pkg install termux-boot
+
+
+chmod +x ~/.termux/boot/startup.sh
+
+mkdir -p ~/.termux/boot/
+nano ~/.termux/boot/startup.sh
+
+
+
+
+#!/data/data/com.termux/files/usr/bin/bash
+
+# Prevent device from sleeping
+termux-wake-lock
+
+# Start localhost server
+nohup python3 -m http.server 8080 &
+
+# Start Serveo tunnel
+nohup ssh -o ServerAliveInterval=60 -R rudra:80:localhost:8080 serveo.net &
+
+
+
+chmod +x ~/.termux/boot/startup.sh
