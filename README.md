@@ -36,3 +36,11 @@ termux-wake-lock
 
 
 pkg update && pkg upgrade -y && pkg install python termux-api git -y && termux-setup-storage && pip install flask
+
+
+
+
+
+
+nohup ssh -o ServerAliveInterval=60 -R 80:localhost:8080 serveo.net &
+nohup python server.py &
