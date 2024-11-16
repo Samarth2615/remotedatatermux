@@ -71,4 +71,8 @@ nohup ssh -o ServerAliveInterval=60 -R rudra:80:localhost:8080 serveo.net &
 
 
 
+
+
+
+# then
 chmod +x ~/.termux/boot/startup.sh
