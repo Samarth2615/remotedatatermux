@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Termux Web Control Panel</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background-color: #f0f8ff; }
+        h2, h3 { color: #4CAF50; }
+        button, input, select { margin: 5px; padding: 8px; border: 1px solid #ddd; border-radius: 4px; }
+        button:hover, input:hover, select:hover { background-color: #4CAF50; color: white; cursor: pointer; }
+        img { display: block; margin-top: 10px; max-width: 300px; }
+        pre { background-color: #f4f4f4; padding: 10px; border-radius: 4px; }
+        .section { margin-bottom: 30px; }
+    </style>
+</head>
+<body>
+
+<h2>Termux Web Control Panel</h2>
+
+<!-- Send SMS Section -->
+<div class="section">
+    <h3>Send SMS</h3>
+    <form id="smsForm">
+        <input type="text" id="smsNumber" placeholder="Phone number" required>
+        <input type="text" id="smsMessage" placeholder="Message" required>
+        <button type="submit">Send SMS</button>
+    </form>
+</div>
+
+<!-- Read SMS Section -->
+<div class="section">
+    <h3>Read SMS</h3>
+    <button onclick="readSMS()">Read SMS</button>
+    <pre id="smsOutput"></pre>
+</div>
+
+<!-- Make Call Section -->
+<div class="section">
+    <h3>Make Call</h3>
+    <input type="text" id="callNumber" placeholder="Phone number">
+    <button onclick="makeCall()">Call</button>
+</div>
+
+<!-- Contacts Section -->
+<div class="section">
+    <h3>View Contacts</h3>
+    <button onclick="getContacts()">Get Contacts</button>
+    <pre id="contactsOutput"></pre>
+</div>
+
+<!-- Call Logs Section -->
+<div class="section">
+    <h3>View Call Logs</h3>
+    <button onclick="getCallLogs()">Get Call Logs</button>
+    <pre id="callLogsOutput"></pre>
+</div>
+
+<!-- Capture Photo Section -->
+<div class="section">
+    <h3>Capture Photo</h3>
+    <button onclick="capturePhoto(0)">Back Camera</button>
+    <button onclick="capturePhoto(1)">Front Camera</button>
+    <img id="photo" src="#">
+</div>
+
+<!-- File Manager -->
+<div class="section">
+    <h3>File Manager</h3>
+    <a href="/browse">Open File Browser</a>
+</div>
+
+<!-- Get Location Section -->
+<div class="section">
+    <h3>Show Notification</h3>
+    <input type="text" id="notifTitle" placeholder="Title">
+    <input type="text" id="notifContent" placeholder="Content">
+    <button onclick="showNotification()">Send Notification</button>
+</div>
+
+<!-- Torch Control Section -->
+<div class="section">
+    <h3>Torch Control</h3>
+    <button onclick="toggleTorch('on')">Torch On</button>
+    <button onclick="toggleTorch('off')">Torch Off</button>
+</div>
+
+<!-- Volume Control Section -->
+<div class="section">
+    <h3>Change Volume</h3>
+    <select id="volumeType">
+        <option value="media">Media</option>
+        <option value="call">Call</option>
+        <option value="alarm">Alarm</option>
+    </select>
+    <input type="number" id="volumeLevel" min="0" max="15" value="5">
+    <button onclick="changeVolume()">Set Volume</button>
+</div>
+
+<!-- Text-to-Speech Section -->
+<div class="section">
+    <h3>Text-to-Speech</h3>
+    <input type="text" id="speakText" placeholder="Enter text">
+    <button onclick="speakText()">Speak</button>
+</div>
+
+<!-- Vibration Section -->
+<div class="section">
+    <h3>Vibrate Device</h3>
+    <input type="number" id="vibrateDuration" placeholder="Duration (ms)" value="500">
+    <button onclick="vibrate()">Vibrate</button>
+</div>
+
+<!-- System Settings Section -->
+<div class="section">
+    <h3>Modify System Settings</h3>
+    <select id="settingType">
+        <option value="wifi">Wi-Fi</option>
+        <option value="bluetooth">Bluetooth</option>
+        <option value="brightness">Brightness</option>
+    </select>
+    <input type="text" id="settingValue" placeholder="Enable/Disable or Brightness value">
+    <button onclick="modifySettings()">Modify</button>
+</div>
+
+<script>
+// AJAX functions
+function readSMS() {
+    fetch('/read_sms').then(res => res.json()).then(data => {
+        document.getElementById('smsOutput').textContent = JSON.stringify(data, null, 2);
+    });
+}
+
+function sendSMS() {
+    const number = document.getElementById('smsNumber').value;
+    const message = document.getElementById('smsMessage').value;
+    fetch('/send_sms', {
+        method: 'POST',
+        body: new URLSearchParams({ number, message })
+    });
+}
+
+function makeCall() {
+    const number = document.getElementById('callNumber').value;
+    fetch('/make_call', {
+        method: 'POST',
+        body: new URLSearchParams({ number })
+    });
+}
+
+function getContacts() {
+    fetch('/get_contacts').then(res => res.json()).then(data => {
+        document.getElementById('contactsOutput').textContent = JSON.stringify(data, null, 2);
+    });
+}
+
+function getCallLogs() {
+    fetch('/get_call_logs').then(res => res.json()).then(data => {
+        document.getElementById('callLogsOutput').textContent = JSON.stringify(data, null, 2);
+    });
+}
+
+function capturePhoto(cameraId) {
+    fetch(`/capture_photo?camera=${cameraId}`).then(res => res.blob()).then(blob => {
+        document.getElementById('photo').src = URL.createObjectURL(blob);
+    });
+}
+
+function listFiles() {
+    fetch('/list_files').then(res => res.json()).then(data => {
+        let fileList = data.map(file => `Name: ${file.name}, Size: ${file.size} bytes`).join("\n");
+        document.getElementById('fileListOutput').textContent = fileList;
+    });
+}
+
+function showNotification() {
+    const title = document.getElementById('notifTitle').value;
+    const content = document.getElementById('notifContent').value;
+    fetch('/show_notification', {
+        method: 'POST',
+        body: new URLSearchParams({ title, content })
+    });
+}
+
+function toggleTorch(state) {
+    fetch('/torch', {
+        method: 'POST',
+        body: new URLSearchParams({ state })
+    });
+}
+
+function changeVolume() {
+    const type = document.getElementById('volumeType').value;
+    const level = document.getElementById('volumeLevel').value;
+    fetch('/change_volume', {
+        method: 'POST',
+        body: new URLSearchParams({ type, level })
+    });
+}
+
+function speakText() {
+    const text = document.getElementById('speakText').value;
+    fetch('/speak_text', {
+        method: 'POST',
+        body: new URLSearchParams({ text })
+    });
+}
+
+function vibrate() {
+    const duration = document.getElementById('vibrateDuration').value;
+    fetch('/vibrate', {
+        method: 'POST',
+        body: new URLSearchParams({ duration })
+    });
+}
+
+function modifySettings() {
+    const setting = document.getElementById('settingType').value;
+    const value = document.getElementById('settingValue').value;
+    fetch('/modify_settings', {
+        method: 'POST',
+        body: new URLSearchParams({ setting, value })
+    });
+}
+</script>
+
+</body>
+</html>
