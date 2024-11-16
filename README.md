@@ -35,4 +35,4 @@ termux-wake-lock
 
 
 
-pkg update && pkg upgrade -y && pkg install python termux-api -y && termux-setup-storage && pip install flask
+pkg update && pkg upgrade -y && pkg install python termux-api git -y && termux-setup-storage && pip install flask
