@@ -50,7 +50,7 @@ nohup python server.py &
 pkg install termux-boot
 
 
-chmod +x ~/.termux/boot/startup.sh
+
 
 mkdir -p ~/.termux/boot/
 nano ~/.termux/boot/startup.sh
