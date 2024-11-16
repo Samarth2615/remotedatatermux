@@ -32,3 +32,7 @@ run by python server.py
 ssh-keygen for serveo
 
 termux-wake-lock
+
+
+
+pkg update && pkg upgrade -y && pkg install python termux-api -y && termux-setup-storage && pip install flask
