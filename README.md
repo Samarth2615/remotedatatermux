@@ -42,7 +42,12 @@ pkg update && pkg upgrade -y && pkg install python termux-api git -y && termux-s
 
 
 
-nohup ssh -o ServerAliveInterval=60 -R 80:localhost:8080 serveo.net &
+nohup ssh -o ServerAliveInterval=60 -R rudra:80:localhost:8080 serveo.net 
+
+
+
+
+
 nohup python server.py &
 
 
